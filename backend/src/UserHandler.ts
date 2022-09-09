@@ -1,7 +1,7 @@
 import * as sessionHandler from "./SessionHandler";
 
-import { Schema, model } from "mongoose";
 import { compare, genSalt, hash } from "bcrypt";
+import mongoose, { Model, Schema, model } from "mongoose";
 
 export interface IUser {
 	username: string;
@@ -16,7 +16,7 @@ const userSchema = new Schema<IUser>({
 	password: { type: String, required: true },
 });
 
-const User = model<IUser>("User", userSchema);
+const User = (mongoose.models.User as Model<IUser>) || model<IUser>("User", userSchema);
 
 export function createUser(data: IUser) {
 	return new Promise<{ status: number; message?: string }>(async (resolve, reject) => {
@@ -48,7 +48,7 @@ export function createUser(data: IUser) {
 }
 
 export function getUser(data: IUser) {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<IUser>(async (resolve, reject) => {
 		const user = await User.findOne({ username: data.username }).exec();
 
 		if (!user) {
@@ -64,6 +64,11 @@ export function signIn(data: IUser) {
 	return new Promise<string>(async (resolve, reject) => {
 		const user = await User.findOne({ username: data.username }).exec();
 
+		if (!user) {
+			reject({ status: 400, message: "User doesn't exist!" });
+			return;
+		}
+
 		const result = await compare(data.password, user.password);
 
 		if (!result) {
@@ -71,7 +76,7 @@ export function signIn(data: IUser) {
 			return;
 		}
 
-		const session = sessionHandler.createSession(data);
+		const session = await sessionHandler.createSession(data);
 
 		resolve(session);
 	});

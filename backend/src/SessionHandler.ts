@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+import { IUser, getUser } from "./userHandler";
+import mongoose, { Model, Schema, model } from "mongoose";
 
-import { IUser } from "./userHandler";
 import { randomUUID } from "crypto";
 
 interface ISession {
@@ -14,7 +14,7 @@ const sessionSchema = new Schema<ISession>({
 	value: { type: String, required: true },
 });
 
-const Session = model<ISession>("Session", sessionSchema);
+const Session = (mongoose.models.Session as Model<ISession>) || model<ISession>("Session", sessionSchema);
 
 export function createSession(user: IUser) {
 	return new Promise<string>(async (resolve, reject) => {
@@ -31,19 +31,21 @@ export function createSession(user: IUser) {
 	});
 }
 
-export function validateSession(user: IUser, token: string) {
+export function validateSession(token: string) {
 	return new Promise(async (resolve, reject) => {
-		const result = await Session.findOne({ username: user.username, token: token }).exec();
+		const result = await Session.findOne({ token: token }).exec();
 
 		if (!result) {
 			reject({ status: 400, message: "Session invalid!" });
 			return;
 		}
 
-		resolve(true);
+		getUser(result)
+			.then((user) => resolve({ username: user.username, email: user.email }))
+			.catch((res) => reject({ status: 400, message: "User not found!" }));
 	});
 }
 
 export function deleteSession(user: IUser) {
-	Session.findOneAndRemove({ username: user.username }).exec();
+	Session.findOneAndDelete({ username: user.username }).exec();
 }

@@ -1,8 +1,9 @@
 import "dotenv/config";
 
+import * as sessionHandler from "./SessionHandler";
 import * as userHandler from "./UserHandler";
 
-import express, { json } from "express";
+import express, { json, text } from "express";
 
 import { connect } from "mongoose";
 
@@ -21,6 +22,13 @@ app.post("/signin", json(), async (req, res) => {
 	userHandler
 		.signIn(req.body)
 		.then((session) => res.status(200).send(session))
+		.catch((err) => res.status(err.status).send(err.message));
+});
+
+app.post("/session", text(), async (req, res) => {
+	sessionHandler
+		.validateSession(req.body)
+		.then((user) => res.status(200).send(user))
 		.catch((err) => res.status(err.status).send(err.message));
 });
 

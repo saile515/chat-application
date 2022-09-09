@@ -38,7 +38,7 @@ const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps
 
 				document.cookie = `session=${await res.text()}; expires=${target.retain.checked ? date.toUTCString() : "session"}`;
 
-				router.push("/");
+				router.push("/app");
 			}
 		});
 	}
@@ -56,7 +56,7 @@ const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps
 				<Submit label="Sign in" />
 				<p>
 					Don't have an account?{" "}
-					<a href="/signin" className="text-blue-500">
+					<a href="/signup" className="text-blue-500">
 						Sign up
 					</a>
 				</p>

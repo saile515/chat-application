@@ -49,9 +49,9 @@ const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps
 				<Input label="Username" />
 				<Input label="Password" type="password" />
 				<p className="text-red-500 mt-2">{errorMessage}</p>
-				<label htmlFor="retain">
-					Remember me?
-					<input type="checkbox" name="retain" id="retain" />
+				<label htmlFor="retain" className="flex items-baseline">
+					<span>Remember me?</span>
+					<input type="checkbox" name="retain" id="retain" className="w-3 h-3 m-1" />
 				</label>
 				<Submit label="Sign in" />
 				<p>

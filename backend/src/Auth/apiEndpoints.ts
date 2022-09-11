@@ -1,12 +1,10 @@
 import * as sessionHandler from "./sessionHandler";
 import * as userHandler from "./UserHandler";
 
-import { json, text } from "express";
-
-import { app } from "..";
+import { Express, json, text } from "express";
 
 // Manage all authentication related endpoints
-export default function setupAuthApiEndpoints() {
+export default function setupAuthApiEndpoints(app: Express) {
 	app.post("/signup", json(), async (req, res) => {
 		const user = await userHandler.createUser(req.body);
 

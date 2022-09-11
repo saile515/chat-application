@@ -32,7 +32,7 @@ export function createSession(user: IUser) {
 }
 
 export function validateSession(token: string) {
-	return new Promise(async (resolve, reject) => {
+	return new Promise<IUser>(async (resolve, reject) => {
 		const result = await Session.findOne({ token: token }).exec();
 
 		if (!result) {
@@ -41,7 +41,7 @@ export function validateSession(token: string) {
 		}
 
 		getUser(result)
-			.then((user) => resolve({ username: user.username, email: user.email }))
+			.then((user) => resolve(user))
 			.catch((res) => reject({ status: 400, message: "User not found!" }));
 	});
 }

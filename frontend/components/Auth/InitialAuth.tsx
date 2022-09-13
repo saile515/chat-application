@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 
 import { GlobalState } from "../../pages/_app";
 
-export default function InitialAuth({ env }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function InitialAuth() {
 	const [user, setUser] = useContext(GlobalState).user;
 
 	useEffect(() => {
@@ -18,14 +18,10 @@ export default function InitialAuth({ env }: InferGetStaticPropsType<typeof getS
 		if (!sessionCookie) return;
 
 		// Validate session with server
-		fetch(`${env.BACKEND_URL}/session`, { method: "POST", body: sessionCookie }).then(async (user) => setUser(await user.json()));
+		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/session`, { method: "POST", body: sessionCookie }).then(async (user) =>
+			setUser(await user.json())
+		);
 	}, []);
 
 	return <></>;
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-	return {
-		props: { env: process.env },
-	};
-};

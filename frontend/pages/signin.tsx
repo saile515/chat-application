@@ -6,7 +6,7 @@ import Input from "../components/Auth/Input";
 import Submit from "../components/Auth/Submit";
 import { useRouter } from "next/router";
 
-const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const SignIn: NextPage = () => {
 	const [errorMessage, setErrorMessage] = useState<null | string>(null);
 	const router = useRouter();
 
@@ -23,7 +23,7 @@ const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps
 			password: target.password.value,
 		};
 
-		fetch(`${env.BACKEND_URL}/signin`, {
+		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/signin`, {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: {
@@ -63,12 +63,6 @@ const SignIn: NextPage = ({ env }: InferGetStaticPropsType<typeof getStaticProps
 			</AuthContainer>
 		</div>
 	);
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-	return {
-		props: { env: process.env },
-	};
 };
 
 export default SignIn;

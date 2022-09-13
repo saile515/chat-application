@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
 
 	const sessionFound = await new Promise<boolean>((resolve, reject) => {
 		if (session) {
-			fetch(`${process.env.BACKEND_URL}/session`, { method: "POST", body: session }).then((res) => {
+			fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/session`, { method: "POST", body: session }).then((res) => {
 				resolve(res.status == 200);
 			});
 		} else {

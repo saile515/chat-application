@@ -1,7 +1,5 @@
 import mongoose, { Model, Schema, model } from "mongoose";
 
-import { IUser } from "../Auth/userHandler";
-
 export interface Message {
 	sender: string;
 	content: string;

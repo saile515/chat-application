@@ -2,10 +2,13 @@ import "dotenv/config";
 
 import WebSocket, { WebSocketServer } from "ws";
 
+import { IUser } from "./Auth/userHandler";
 import { IncomingMessage } from "http";
 import { connect } from "mongoose";
+import cookieParser from "cookie-parser";
 import express from "express";
 import setupAuthApiEndpoints from "./Auth/apiEndpoints";
+import setupConversationApiEndpoints from "./Conversations/apiEndpoints";
 import { validateSession } from "./Auth/sessionHandler";
 
 // Connect to database
@@ -15,7 +18,10 @@ connect(`mongodb://${process.env.DB_HOST}:27017/${process.env.DB_NAME}`);
 const expressServer = express();
 const expressPort = 8080;
 
+expressServer.use(cookieParser());
+
 setupAuthApiEndpoints(expressServer);
+setupConversationApiEndpoints(expressServer);
 
 expressServer.listen(expressPort, () => {
 	console.log(`REST api listening on ${expressPort}`);
@@ -25,7 +31,7 @@ expressServer.listen(expressPort, () => {
 const WSPort = 8081;
 const WSServer = new WebSocketServer({ port: WSPort });
 
-const WSClients = [];
+const WSClients: { ws: WebSocket; user: IUser }[] = [];
 
 WSServer.on("connection", (ws: WebSocket, req: IncomingMessage) => {
 	const cookies = req.headers.cookie.split(";");
@@ -34,6 +40,16 @@ WSServer.on("connection", (ws: WebSocket, req: IncomingMessage) => {
 
 	// Add client to connection pool if authenticated
 	validateSession(session)
-		.then((user) => WSClients.push({ ws: ws, user: user }))
+		.then((user) => {
+			WSClients.push({ ws: ws, user: user });
+
+			// Remove client on disconnect
+			ws.on("close", () => {
+				const wsIndex = WSClients.findIndex((ws) => ws.user == user);
+				WSClients.splice(wsIndex, 1);
+			});
+		})
 		.catch((err) => ws.close(err.status, err.message));
 });
+
+console.log(`WebSocket server is listening on ${WSPort}`);

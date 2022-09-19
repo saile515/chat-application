@@ -5,6 +5,7 @@
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"sourceMap": true,
+		"sourceRoot": "./",
 		"outDir": "build",
 		"esModuleInterop": true
 	},

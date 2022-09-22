@@ -56,9 +56,13 @@ export default function Chat() {
 				{conversation ? (
 					<ol className="flex flex-col-reverse h-full overflow-y-auto">
 						{conversation.messages?.map((message) => (
-							<li key={message.date + message.sender} className="p-2 border-t flex">
+							<li key={message.date + message.sender} className="p-2 border-t flex flex-wrap">
 								<p className="font-bold mr-2">{message.sender}</p>
-								<p className="whitespace-pre-line bg-white px-2 rounded-xl">{message.content}</p>
+								<p className="text-xs font-bold text-gray-600 leading-6 align-center">
+									{new Date(message.date).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+								</p>
+								<div className="basis-full h-0"></div>
+								<p className="whitespace-pre-line">{message.content}</p>
 							</li>
 						))}
 					</ol>

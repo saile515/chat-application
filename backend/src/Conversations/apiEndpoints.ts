@@ -1,7 +1,7 @@
 import * as sessionHandler from "../Auth/sessionHandler";
 
 import { Express, json } from "express";
-import { createConversation, getConversations } from "./conversationHandler";
+import { createConversation, getConversation, getConversations } from "./conversationHandler";
 
 import { IUser } from "../Auth/userHandler";
 
@@ -19,6 +19,19 @@ export default function setupConversationApiEndpoints(app: Express) {
 		const conversations = await getConversations(session.username);
 
 		res.status(200).send(JSON.stringify(conversations));
+	});
+
+	app.get("/conversation/:id", async (req, res) => {
+		const session: IUser = await sessionHandler.validateSession(req.cookies.session).catch((err) => {
+			res.status(err.status).send(err.message);
+			return null;
+		});
+
+		if (!session) return;
+
+		const conversation = await getConversation(req.params.id);
+
+		res.status(200).send(JSON.stringify(conversation));
 	});
 
 	app.post("/conversation", json(), async (req, res) => {

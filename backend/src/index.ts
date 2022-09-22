@@ -7,6 +7,7 @@ import { IncomingMessage } from "http";
 import { connect } from "mongoose";
 import cookieParser from "cookie-parser";
 import express from "express";
+import { handleMessages } from "./Conversations/wsHandler";
 import setupAuthApiEndpoints from "./Auth/apiEndpoints";
 import setupConversationApiEndpoints from "./Conversations/apiEndpoints";
 import { validateSession } from "./Auth/sessionHandler";
@@ -42,6 +43,7 @@ WSServer.on("connection", (ws: WebSocket, req: IncomingMessage) => {
 	validateSession(session)
 		.then((user) => {
 			WSClients.push({ ws: ws, user: user });
+			handleMessages(ws, user, WSClients);
 
 			// Remove client on disconnect
 			ws.on("close", () => {

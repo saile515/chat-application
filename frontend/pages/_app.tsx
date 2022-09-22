@@ -10,6 +10,7 @@ type State<T> = [T, Dispatch<SetStateAction<T>>];
 interface GlobalState {
 	WebSocket: State<WebSocket>;
 	user: State<User>;
+	activeConversation: State<string>;
 }
 
 export const GlobalState = createContext<GlobalState>({} as GlobalState);
@@ -18,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const globalState: GlobalState = {
 		WebSocket: useState<WebSocket>(),
 		user: useState<User>(),
+		activeConversation: useState<string>(),
 	};
 
 	return (

@@ -89,6 +89,7 @@ function ConversationCreator(props: { callback?: () => any }) {
 export default function ConversationBrowser() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
 	const [createMenuOpen, setCreateMenuOpen] = useState<boolean>(false);
+	const [expanded, setExpanded] = useState<boolean>(true);
 	const [user] = useContext(GlobalState).user;
 	const [activeConversation, setActiveConversation] = useContext(GlobalState).activeConversation;
 
@@ -105,18 +106,34 @@ export default function ConversationBrowser() {
 	}, [conversations]);
 
 	return (
-		<div className="w-80 h-screen bg-white relative flex-shrink-0">
+		<div
+			className={`w-full sm:w-80 transition-all ${
+				expanded ? "h-screen" : "h-16 overflow-hidden shadow-lg"
+			} sm:h-screen bg-white flex-shrink-0 fixed top-0 left-0 sm:relative`}>
+			<div className="h-16 flex items-center sm:hidden">
+				<button onClick={() => setExpanded(!expanded)} className="w-12 h-12 leading-12 text-center text-3xl font-black pb-2 ml-2">
+					=
+				</button>
+			</div>
 			{createMenuOpen && <ConversationCreator callback={() => setCreateMenuOpen(false)} />}
 			{!createMenuOpen && (
 				<button
 					onClick={() => setCreateMenuOpen(true)}
-					className="flex justify-center items-center font-black text-4xl h-10 w-10 text-gray-50 bg-blue-700 hover:bg-blue-600 border-t border-gray-50 m-2 pb-1.5 rounded-full shadow position absolute bottom-4 right-4">
+					className={`flex justify-center items-center font-black text-4xl h-10 w-10 text-gray-50 bg-blue-700 hover:bg-blue-600 border-t border-gray-50 m-2 pb-1.5 rounded-full shadow position absolute ${
+						expanded ? "bottom-4" : ""
+					} right-4`}>
 					+
 				</button>
 			)}
 			<ul>
 				{conversations.map((item) => (
-					<li key={item._id} className="border-b border-color-gray-200 p-2" onClick={() => setActiveConversation(item._id)}>
+					<li
+						key={item._id}
+						className="border-b border-color-gray-200 p-2"
+						onClick={() => {
+							setActiveConversation(item._id);
+							setExpanded(false);
+						}}>
 						<p className="font-bold">
 							{item.members
 								.filter((member) => member != user.username)

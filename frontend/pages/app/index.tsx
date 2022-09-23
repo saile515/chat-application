@@ -10,7 +10,7 @@ const App: NextPage = () => {
 	const [activeConversation] = useContext(GlobalState).activeConversation;
 
 	return (
-		<div className="w-screen h-screen flex overflow-hidden">
+		<div className="w-screen h-screen sm:flex overflow-hidden">
 			<ConversationBrowser />
 			{activeConversation && <Chat />}
 			<InitialAuth />

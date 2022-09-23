@@ -51,7 +51,7 @@ export default function Chat() {
 	}
 
 	return (
-		<div className="w-full max-w-[calc(100vw-20rem)] h-full bg-gray-100 flex flex-col">
+		<div className="w-full sm:max-w-[calc(100vw-20rem)] h-full bg-gray-100 flex flex-col">
 			<div className="h-full overflow-hidden">
 				{conversation ? (
 					<ol className="flex flex-col-reverse h-full overflow-y-auto">

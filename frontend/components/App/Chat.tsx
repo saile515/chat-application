@@ -1,7 +1,35 @@
-import { KeyboardEvent, useContext, useEffect, useState } from "react";
+import { KeyboardEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { Conversation } from "./types";
 import { GlobalState } from "../../pages/_app";
+
+function MessageBar(props: { sendMessage: (content: string) => any }) {
+	const ref = useRef<HTMLSpanElement>();
+
+	function send() {
+		props.sendMessage(ref.current.innerText);
+		ref.current.innerText = "";
+	}
+
+	return (
+		<div className="flex items-center bg-gray-200">
+			<span
+				ref={ref}
+				onKeyDown={(event) => {
+					if (event.key == "Enter" && !event.shiftKey) {
+						event.preventDefault();
+						send();
+					}
+				}}
+				className="max-h-96 min-h-8 m-2 px-2 bg-white w-full overflow-y-auto break-words"
+				role="textarea"
+				contentEditable></span>
+			<button onClick={send} className="bg-blue-500 text-white font-bold px-4 mr-2 rounded-full">
+				Send
+			</button>
+		</div>
+	);
+}
 
 export default function Chat() {
 	const {
@@ -37,17 +65,13 @@ export default function Chat() {
 			});
 	}, [activeConversation]);
 
-	function sendMessage(event: KeyboardEvent<HTMLSpanElement>) {
-		const content = (event.target as HTMLElement).innerText;
-
+	function sendMessage(content: string) {
 		const data = {
 			conversation: activeConversation,
 			content: content,
 		};
 
 		WebSocket.send(JSON.stringify(data));
-
-		(event.target as HTMLElement).innerHTML = "";
 	}
 
 	return (
@@ -70,18 +94,7 @@ export default function Chat() {
 					<div></div>
 				)}
 			</div>
-			<div className="flex items-center bg-gray-200">
-				<span
-					onKeyDown={(event) => {
-						if (event.key == "Enter" && !event.shiftKey) {
-							event.preventDefault();
-							sendMessage(event);
-						}
-					}}
-					className="max-h-96 min-h-8 m-2 px-2 bg-white w-full overflow-y-auto break-words"
-					role="textarea"
-					contentEditable></span>
-			</div>
+			<MessageBar sendMessage={sendMessage} />
 		</div>
 	);
 }

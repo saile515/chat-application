@@ -90,19 +90,42 @@ export default function ConversationBrowser() {
 	const [conversations, setConversations] = useState<Conversation[]>([]);
 	const [createMenuOpen, setCreateMenuOpen] = useState<boolean>(false);
 	const [expanded, setExpanded] = useState<boolean>(true);
-	const [user] = useContext(GlobalState).user;
-	const [activeConversation, setActiveConversation] = useContext(GlobalState).activeConversation;
+	const {
+		user: [user],
+		activeConversation: [activeConversation, setActiveConversation],
+		WebSocket: [WebSocket],
+	} = useContext(GlobalState);
 
-	useEffect(() => {
+	function updateBrowser() {
 		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations`).then(async (res) => {
 			if (res.status == 200) {
-				setConversations(await res.json());
+				const conversations: Conversation[] = await res.json();
+
+				conversations.sort((a, b) => {
+					return new Date(b.messages[b.messages.length - 1].date).getTime() - new Date(a.messages[a.messages.length - 1].date).getTime();
+				});
+
+				setConversations(conversations);
 			}
 		});
+	}
+
+	useEffect(() => {
+		if (!WebSocket) return;
+
+		WebSocket.addEventListener("message", updateBrowser);
+
+		return () => {
+			WebSocket.removeEventListener("message", updateBrowser);
+		};
+	}, [WebSocket]);
+
+	useEffect(() => {
+		updateBrowser();
 	}, []);
 
 	useEffect(() => {
-		if (conversations[0]) setActiveConversation(conversations[0]._id);
+		if (conversations[0] && !activeConversation) setActiveConversation(conversations[0]._id);
 	}, [conversations]);
 
 	return (

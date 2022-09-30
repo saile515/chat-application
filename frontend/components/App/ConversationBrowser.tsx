@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 
 import { Conversation } from "./types";
 import { GlobalState } from "../../pages/_app";

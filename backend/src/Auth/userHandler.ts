@@ -49,6 +49,7 @@ export function createUser(data: IUser) {
 
 export function getUser(data: IUser) {
 	return new Promise<IUser>(async (resolve, reject) => {
+		// Search DB for user
 		const user = await User.findOne({ username: data.username }).exec();
 
 		if (!user) {
@@ -62,6 +63,7 @@ export function getUser(data: IUser) {
 
 export function signIn(data: IUser) {
 	return new Promise<string>(async (resolve, reject) => {
+		// Search DB for user
 		const user = await User.findOne({ username: data.username }).exec();
 
 		if (!user) {
@@ -69,6 +71,7 @@ export function signIn(data: IUser) {
 			return;
 		}
 
+		// Check if password matches hash
 		const result = await compare(data.password, user.password);
 
 		if (!result) {
@@ -76,6 +79,7 @@ export function signIn(data: IUser) {
 			return;
 		}
 
+		// Create user/session pair in DB
 		const session = await sessionHandler.createSession(data);
 
 		resolve(session);

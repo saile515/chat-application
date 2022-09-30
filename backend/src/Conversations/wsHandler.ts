@@ -25,10 +25,12 @@ export function handleMessages(ws: WebSocket, user: IUser, clientList: { ws: Web
 			.catch((err) => console.error(err));
 	});
 
+	// Send conversation updates to clients
 	async function pushUpdates(conversationID: string, message: Message) {
 		const conversation = await getConversation(conversationID);
 		const onlineClients: { ws: WebSocket; user: IUser }[] = [];
 
+		// Find which users are active
 		conversation.members.forEach((user) => {
 			const activeClient = clientList.find((client) => user == client.user.username);
 			if (activeClient) {
@@ -41,6 +43,7 @@ export function handleMessages(ws: WebSocket, user: IUser, clientList: { ws: Web
 			message: message,
 		};
 
+		// Send data to active clients
 		onlineClients.forEach((client) => {
 			client.ws.send(JSON.stringify(data));
 		});

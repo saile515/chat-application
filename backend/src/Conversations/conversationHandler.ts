@@ -48,6 +48,7 @@ export function createConversation(members: string[]) {
 
 export function getConversation(id: string) {
 	return new Promise<IConversation>(async (resolve, reject) => {
+		// Search DB for conversation
 		const conversation = await Conversation.findById(id);
 
 		if (!conversation) {
@@ -61,6 +62,7 @@ export function getConversation(id: string) {
 
 export function getConversations(user: string) {
 	return new Promise<IConversation[]>(async (resolve, reject) => {
+		// Get all conversations where user is member
 		const conversations = await Conversation.find({ members: user });
 
 		resolve(conversations);

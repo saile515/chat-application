@@ -1,4 +1,4 @@
-import { KeyboardEvent, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Conversation } from "./types";
 import { GlobalState } from "../../pages/_app";
@@ -38,6 +38,7 @@ export default function Chat() {
 	} = useContext(GlobalState);
 	const [conversation, setConversation] = useState<Conversation>();
 
+	// Handle WebSocket updates
 	useEffect(() => {
 		function updateMessages(event: MessageEvent) {
 			const update = JSON.parse(event.data);
@@ -56,6 +57,7 @@ export default function Chat() {
 		};
 	}, [WebSocket, conversation]);
 
+	// Get conversation
 	useEffect(() => {
 		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversation/${activeConversation}`)
 			.then((res) => res.json())
@@ -65,6 +67,7 @@ export default function Chat() {
 			});
 	}, [activeConversation]);
 
+	// Post message
 	function sendMessage(content: string) {
 		const data = {
 			conversation: activeConversation,

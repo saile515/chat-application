@@ -7,6 +7,7 @@ import { IUser } from "../Auth/userHandler";
 
 // Manage all conversation related endpoints
 export default function setupConversationApiEndpoints(app: Express) {
+	// Get all conversations
 	app.get("/conversations", async (req, res) => {
 		// Get session, send error if not authenticated
 		const session: IUser = await sessionHandler.validateSession(req.cookies.session).catch((err) => {
@@ -21,6 +22,7 @@ export default function setupConversationApiEndpoints(app: Express) {
 		res.status(200).send(JSON.stringify(conversations));
 	});
 
+	// Get one conversation
 	app.get("/conversation/:id", async (req, res) => {
 		const session: IUser = await sessionHandler.validateSession(req.cookies.session).catch((err) => {
 			res.status(err.status).send(err.message);
@@ -34,6 +36,7 @@ export default function setupConversationApiEndpoints(app: Express) {
 		res.status(200).send(JSON.stringify(conversation));
 	});
 
+	// Create conversation
 	app.post("/conversation", json(), async (req, res) => {
 		if (!req.body.members) return;
 

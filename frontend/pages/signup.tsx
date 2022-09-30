@@ -3,6 +3,7 @@ import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 
 import AuthContainer from "../components/Auth/AuthContainer";
 import Input from "../components/Auth/Input";
+import Link from "next/link";
 import Submit from "../components/Auth/Submit";
 import { useRouter } from "next/router";
 
@@ -46,9 +47,9 @@ const SignUp: NextPage = () => {
 				<Submit label="Sign up" />
 				<p>
 					Already have an account?{" "}
-					<a href="/signin" className="text-blue-500">
+					<Link href="/signin" className="text-blue-500">
 						Sign in
-					</a>
+					</Link>
 				</p>
 			</AuthContainer>
 		</div>

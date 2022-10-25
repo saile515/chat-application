@@ -50,7 +50,8 @@ export function createUser(data: IUser) {
 export function getUser(data: IUser) {
 	return new Promise<IUser>(async (resolve, reject) => {
 		// Search DB for user
-		const user = await User.findOne({ username: data.username }).exec();
+		const user: IUser = await User.findOne({ username: data.username }).exec();
+
 		if (!user) {
 			reject({ status: 404, message: "User not found!" });
 			return;

@@ -34,7 +34,7 @@ export function createSession(user: IUser) {
 export function validateSession(token: string) {
 	return new Promise<IUser>(async (resolve, reject) => {
 		// Search DB for session
-		const result = await Session.findOne({ token: token }).exec();
+		const result = await Session.findOne({ value: token }).exec();
 
 		if (!result) {
 			reject({ status: 400, message: "Session invalid!" });

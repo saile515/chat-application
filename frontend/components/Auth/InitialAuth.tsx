@@ -1,4 +1,3 @@
-import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { useContext, useEffect } from "react";
 
 import { GlobalState } from "../../pages/_app";

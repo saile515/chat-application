@@ -59,7 +59,7 @@ export default function Chat() {
 
 	// Get conversation
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversation/${activeConversation}`)
+		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversation/${activeConversation}`,{credentials:"include"})
 			.then((res) => res.json())
 			.then((res: Conversation) => {
 				res.messages?.reverse();

@@ -30,6 +30,7 @@ function ConversationCreator(props: { callback?: () => any }) {
 			headers: {
 				"Content-Type": "application/json",
 			},
+			credentials: "include"
 		}).then((res) => {
 			if (res.status == 200) {
 				props.callback();
@@ -97,7 +98,7 @@ export default function ConversationBrowser() {
 	} = useContext(GlobalState);
 
 	function updateBrowser() {
-		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations`).then(async (res) => {
+		fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations`, {credentials: "include"}).then(async (res) => {
 			if (res.status == 200) {
 				const conversations: Conversation[] = await res.json();
 

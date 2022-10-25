@@ -51,11 +51,12 @@ export function getUser(data: IUser) {
 	return new Promise<IUser>(async (resolve, reject) => {
 		// Search DB for user
 		const user = await User.findOne({ username: data.username }).exec();
-
 		if (!user) {
 			reject({ status: 404, message: "User not found!" });
 			return;
 		}
+
+		delete user.password;
 
 		resolve(user);
 	});

@@ -4,6 +4,7 @@ import { IUser } from "../Auth/userHandler";
 import { WebSocket } from "ws";
 
 export function handleMessages(ws: WebSocket, user: IUser, clientList: { ws: WebSocket; user: IUser }[]) {
+	// Handle WebSocket message
 	ws.on("message", (data) => {
 		const message = JSON.parse(data.toString());
 
@@ -12,6 +13,8 @@ export function handleMessages(ws: WebSocket, user: IUser, clientList: { ws: Web
 				// If user is part of conversation, post message
 				if (conversation.members.find((member) => member == user.username)) {
 					const messageData = { sender: user.username, content: message.content, date: new Date() };
+
+					// Create message in DB
 					postMessage(message.conversation, messageData)
 						.then(() => {
 							// Update members through websocket

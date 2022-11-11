@@ -27,6 +27,7 @@ const conversationSchema = new Schema<IConversation>({
 	},
 });
 
+// Use model if availble, otherwise create new
 const Conversation = (mongoose.models.Conversation as Model<IConversation>) || model<IConversation>("Conversation", conversationSchema);
 
 export function createConversation(members: string[]) {
@@ -37,10 +38,10 @@ export function createConversation(members: string[]) {
 		// Save conversation to database
 		conversation
 			.save()
-			.then(() => {
+			.then(() => { // Success
 				resolve({ status: 200 });
 			})
-			.catch(() => {
+			.catch(() => { // Error
 				reject({ status: 500, message: "Unknown server error!" });
 			});
 	});
@@ -51,6 +52,7 @@ export function getConversation(id: string) {
 		// Search DB for conversation
 		const conversation = await Conversation.findById(id);
 
+		// Reject if no conversation is found
 		if (!conversation) {
 			reject({ status: 400, message: "Conversation not found!" });
 			return;
@@ -62,7 +64,7 @@ export function getConversation(id: string) {
 
 export function getConversations(user: string) {
 	return new Promise<IConversation[]>(async (resolve, reject) => {
-		// Get all conversations where user is member
+		// Get all conversations where user is a member
 		const conversations = await Conversation.find({ members: user });
 
 		resolve(conversations);

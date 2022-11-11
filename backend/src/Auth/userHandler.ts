@@ -16,12 +16,15 @@ const userSchema = new Schema<IUser>({
 	password: { type: String, required: true },
 });
 
+// Use model if availble, otherwise create new
 const User = (mongoose.models.User as Model<IUser>) || model<IUser>("User", userSchema);
 
 export function createUser(data: IUser) {
 	return new Promise<{ status: number; message?: string }>(async (resolve, reject) => {
 		// Validate that credentials are unique
 		const duplicate = await User.findOne({ $or: [{ username: data.username }, { email: data.email }] }).exec();
+
+		// Prevent duplicate username or email
 		if (duplicate) {
 			resolve({ status: 400, message: "A user with that username or email already exists!" });
 			return;
@@ -36,6 +39,7 @@ export function createUser(data: IUser) {
 					return;
 				}
 
+				// Replace password with hash
 				const userDetails: IUser = { ...data, password: hash };
 
 				// Save user to DB
@@ -57,6 +61,7 @@ export function getUser(data: IUser) {
 			return;
 		}
 
+		// Remove password attribute from user object
 		delete user.password;
 
 		resolve(user);
@@ -68,6 +73,7 @@ export function signIn(data: IUser) {
 		// Search DB for user
 		const user = await User.findOne({ username: data.username }).exec();
 
+		// Reject if no user if found
 		if (!user) {
 			reject({ status: 400, message: "User doesn't exist!" });
 			return;
@@ -76,6 +82,7 @@ export function signIn(data: IUser) {
 		// Check if password matches hash
 		const result = await compare(data.password, user.password);
 
+		// Reject if password doesn't match
 		if (!result) {
 			reject({ status: 400, message: "Invalid credentials!" });
 			return;

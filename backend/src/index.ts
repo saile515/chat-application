@@ -20,6 +20,7 @@ connect(`mongodb://${process.env.DB_HOST}:27017/${process.env.DB_NAME}`);
 const expressServer = express();
 const expressPort = 8080;
 
+// Setup CORS policy
 expressServer.use(cors(
 	{
 		origin: "http://169.254.136.52:3000",
@@ -51,6 +52,7 @@ WSServer.on("connection", (ws: WebSocket, req: IncomingMessage) => {
 	validateSession(session)
 		.then((user) => {
 			WSClients.push({ ws: ws, user: user });
+			// Handle messages
 			handleMessages(ws, user, WSClients);
 
 			// Remove client on disconnect

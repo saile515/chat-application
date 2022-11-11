@@ -16,15 +16,15 @@ export default function setupAuthApiEndpoints(app: Express) {
 	app.post("/signin", json(), async (req, res) => {
 		userHandler
 			.signIn(req.body)
-			.then((session) => res.status(200).send(session))
-			.catch((err) => res.status(err.status).send(err.message));
+			.then((session) => res.status(200).send(session)) // Handle success
+			.catch((err) => res.status(err.status).send(err.message)); // Handle error
 	});
 
 	// Validate session
 	app.post("/session", text(), async (req, res) => {
 		sessionHandler
 			.validateSession(req.body)
-			.then((user) => res.status(200).send(user))
-			.catch((err) => res.status(err.status).send(err.message));
+			.then((user) => res.status(200).send(user)) // Handle success
+			.catch((err) => res.status(err.status).send(err.message)); // Handle error
 	});
 }
